@@ -1,0 +1,89 @@
+{
+  "message": "Go Serverless v1.0! Your function executed successfully!",
+  "input": {
+    "resource": "/hello",
+    "path": "/hello",
+    "httpMethod": "GET",
+    "headers": {
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Encoding": "br, gzip, deflate",
+      "Accept-Language": "ja-jp",
+      "CloudFront-Forwarded-Proto": "https",
+      "CloudFront-Is-Desktop-Viewer": "true",
+      "CloudFront-Is-Mobile-Viewer": "false",
+      "CloudFront-Is-SmartTV-Viewer": "false",
+      "CloudFront-Is-Tablet-Viewer": "false",
+      "CloudFront-Viewer-Country": "JP",
+      "Host": "bzzbgbfsc7.execute-api.ap-northeast-1.amazonaws.com",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15",
+      "Via": "2.0 8e55b0ea881ded445c12a84a81dcd1f3.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Id": "eQ0dWubENfOO2SEzSO2qMu0nPiU0tx3w6L1btmC9vGf_3ritZ2sOeg==",
+      "X-Amzn-Trace-Id": "Root=1-5bd2b948-9fa6c5fe229bdf286d351876",
+      "X-Forwarded-For": "203.179.90.205, 52.46.50.90",
+      "X-Forwarded-Port": "443",
+      "X-Forwarded-Proto": "https"
+    },
+    "multiValueHeaders": {
+      "Accept": [
+        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+      ],
+      "Accept-Encoding": ["br, gzip, deflate"],
+      "Accept-Language": ["ja-jp"],
+      "CloudFront-Forwarded-Proto": ["https"],
+      "CloudFront-Is-Desktop-Viewer": ["true"],
+      "CloudFront-Is-Mobile-Viewer": ["false"],
+      "CloudFront-Is-SmartTV-Viewer": ["false"],
+      "CloudFront-Is-Tablet-Viewer": ["false"],
+      "CloudFront-Viewer-Country": ["JP"],
+      "Host": ["bzzbgbfsc7.execute-api.ap-northeast-1.amazonaws.com"],
+      "User-Agent": [
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15"
+      ],
+      "Via": [
+        "2.0 8e55b0ea881ded445c12a84a81dcd1f3.cloudfront.net (CloudFront)"
+      ],
+      "X-Amz-Cf-Id": [
+        "eQ0dWubENfOO2SEzSO2qMu0nPiU0tx3w6L1btmC9vGf_3ritZ2sOeg=="
+      ],
+      "X-Amzn-Trace-Id": ["Root=1-5bd2b948-9fa6c5fe229bdf286d351876"],
+      "X-Forwarded-For": ["203.179.90.205, 52.46.50.90"],
+      "X-Forwarded-Port": ["443"],
+      "X-Forwarded-Proto": ["https"]
+    },
+    "queryStringParameters": null,
+    "multiValueQueryStringParameters": null,
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+      "resourceId": "thsm4w",
+      "resourcePath": "/hello",
+      "httpMethod": "GET",
+      "extendedRequestId": "PXHjWFf7NjMFUiw=",
+      "requestTime": "26/Oct/2018:06:50:48 +0000",
+      "path": "/dev/hello",
+      "accountId": "861968124599",
+      "protocol": "HTTP/1.1",
+      "stage": "dev",
+      "domainPrefix": "bzzbgbfsc7",
+      "requestTimeEpoch": 1540536648667,
+      "requestId": "7893db9f-d8eb-11e8-b68a-fd869302b7f1",
+      "identity": {
+        "cognitoIdentityPoolId": null,
+        "accountId": null,
+        "cognitoIdentityId": null,
+        "caller": null,
+        "sourceIp": "203.179.90.205",
+        "accessKey": null,
+        "cognitoAuthenticationType": null,
+        "cognitoAuthenticationProvider": null,
+        "userArn": null,
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15",
+        "user": null
+      },
+      "domainName": "bzzbgbfsc7.execute-api.ap-northeast-1.amazonaws.com",
+      "apiId": "bzzbgbfsc7"
+    },
+    "body": null,
+    "isBase64Encoded": false
+  }
+}
