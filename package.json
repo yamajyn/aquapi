@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "babel-runtime": "^6.26.0",
-    "serverless": "^1.32.0"
+    "serverless": "^1.32.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

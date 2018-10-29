@@ -1,52 +1,22 @@
-'use strict';
-import AWS from 'aws-sdk'
+import { user, userList, userRegist } from "./src/api/users";
 
-AWS.config.update({region: 'ap-northeast-1'})
+/**
+ * ユーザ一覧取得API
+ */
+// export const handleUserList = (event, context, callback) => {
+//   userList(event, context, callback);
+// };
 
-const db = new AWS.DynamoDB()
+/**
+ * ユーザ取得API
+ */
+export const handleUser = (event, context, callback) => {
+  user(event, context, callback);
+};
 
-export const hello = (event, context, callback) => {
-  const params = {
-    TableName: 'users',
-    Key: {
-      id: {N: event.pathParameters.id}
-    }
-  }
-
-  try {
-    db.getItem(params, (error, data) => {
-      if (error) {
-        callback(null, {statusCode: 400, body: JSON.stringify({message: 'Failed.', error: error})})
-      }
-      callback(null, {statusCode: 200, body: JSON.stringify({message: `Hello, ${data.Item.name.S}.`})});
-    })
-  } catch (error) {
-    callback(null, {statusCode: 400, body: JSON.stringify({message: 'Failed.', error: error})})
-  }
-}
-
-export const regist = (event, context, callback) => {
-  const body = JSON.parse(event.body)
-  const params = {
-    TableName: 'users',
-    Item: {
-      id: {N: String(body.id)},
-      name: {S: body.name}
-    },
-    Expected: {
-      id: {Exists: false}
-    }
-  }
-
-
-  try {
-    db.putItem(params, (error, data) => {
-      if (error) {
-        callback(null, {statusCode: 400, body: JSON.stringify({message: 'Failed.', error: error})})
-      }
-      callback(null, {statusCode: 200, body: JSON.stringify({message: 'Succeeded!', params: params})});
-    })
-  } catch (error) {
-    callback(null, {statusCode: 400, body: JSON.stringify({message: 'Failed.', error: error})})
-  }
-}
+/**
+ * ユーザ登録API
+ */
+export const handleUserRegist = (event, context, callback) => {
+  userRegist(event, context, callback);
+};

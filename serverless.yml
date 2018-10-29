@@ -37,6 +37,8 @@ custom:
         sources:
           - table: users
             sources: [./migrations/users.json]
+  serverless-offline:
+    stage: dev
 
 provider:
   name: aws
@@ -49,7 +51,7 @@ provider:
   # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
     - Effect: Allow
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/aquapi-${self:provider.stage}-*"
       Action:
         - "dynamodb:*"
 #    - Effect: "Allow"
@@ -80,18 +82,25 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  # userList:
+  #   handler: handler.handleUserList
+  #   events:
+  #     - http:
+  #         path: users
+  #         method: get
+  #         cors: true
+  user:
+    handler: handler.handleUser
     events:
       - http:
-          path: hello/{id}
+          path: users/{id}
           method: get
           cors: true
-  create:
-    handler: handler.regist
+  userRegist:
+    handler: handler.handleUserRegist
     events:
       - http:
-          path: names
+          path: users
           method: post
           cors: true
 
@@ -131,13 +140,42 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
-    hello:
+    users:
       Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
       Properties:
-        TableName: users
+        TableName: "aquapi-${self:provider.stage}-users"
         AttributeDefinitions:
           - AttributeName: id
-            AttributeType: N
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    tanks:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        TableName: "aquapi-${self:provider.stage}-tanks"
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    fishes:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        TableName: "aquapi-${self:provider.stage}-fishes"
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
