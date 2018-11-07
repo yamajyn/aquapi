@@ -1,9 +1,12 @@
 import AWS from "aws-sdk";
 import uuidv4 from "uuid/v4";
+import moment from "moment-timezone";
 
 AWS.config.update({ region: "ap-northeast-1" });
 
-const db = new AWS.DynamoDB();
+moment.tz.setDefault("Asia/Tokyo");
+
+const db = new AWS.DynamoDB.DocumentClient();
 
 // export const userList = (event, context, callback) => {
 //   const params = {
@@ -33,20 +36,16 @@ const db = new AWS.DynamoDB();
 
 export const user = (event, context, callback) => {
   const params = {
-    TableName: `aquapi-${event.requestContext.stage}-users`,
+    TableName: `aquapi-users`,
     Key: {
-      id: { S: event.pathParameters.id }
+      id: event.pathParameters.id
     }
   };
 
-  try {
-    db.getItem(params, (error, data) => {
-      if (error) {
-        callback(null, {
-          statusCode: 400,
-          body: JSON.stringify({ message: "Failed.", error: error })
-        });
-      }
+  db.get(params)
+    .promise()
+    .then(data => {
+      console.log("Get User Response ", data);
       callback(null, {
         statusCode: 200,
         body: JSON.stringify({
@@ -54,48 +53,39 @@ export const user = (event, context, callback) => {
           data: data
         })
       });
+    })
+    .catch(err => {
+      console.log("Get User Response ", err);
+      callback(null, {
+        statusCode: 400,
+        body: JSON.stringify({ message: "Failed.", error: err })
+      });
     });
-  } catch (error) {
-    callback(null, {
-      statusCode: 400,
-      body: JSON.stringify({ message: "Failed.", error: error })
-    });
-  }
 };
 
 export const userRegist = (event, context, callback) => {
-  const body = JSON.parse(event.body);
-  const uuid = uuidv4();
-  console.log("regist user uuid is", uuid);
   const params = {
-    TableName: `aquapi-${event.requestContext.stage}-users`,
+    TableName: `aquapi-users`,
     Item: {
-      id: { S: uuid },
-      name: { S: body.name },
-      password: { S: body.password }
+      id: uuidv4(),
+      name: event.userName,
+      email: event.request.userAttributes.email,
+      createdAt: moment().format()
     },
     Expected: {
       id: { Exists: false }
     }
   };
-
-  try {
-    db.putItem(params, (error, data) => {
-      if (error) {
-        callback(null, {
-          statusCode: 400,
-          body: JSON.stringify({ message: "Failed.", error: error })
-        });
-      }
+  console.log("User Regiest ", params.Item);
+  db.put(params)
+    .promise()
+    .then(_ => {
+      callback(null, event);
+    })
+    .catch(err => {
       callback(null, {
-        statusCode: 200,
-        body: JSON.stringify({ message: "Succeeded!", params: params })
+        statusCode: 400,
+        body: JSON.stringify({ message: "Failed.", error: err })
       });
     });
-  } catch (error) {
-    callback(null, {
-      statusCode: 400,
-      body: JSON.stringify({ message: "Failed.", error: error })
-    });
-  }
 };

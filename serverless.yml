@@ -47,11 +47,12 @@ provider:
   # you can overwrite defaults here
   stage: dev
   region: ap-northeast-1
+  profile: yamamoto
 
   # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
     - Effect: Allow
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/aquapi-${self:provider.stage}-*"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/aquapi-*"
       Action:
         - "dynamodb:*"
 #    - Effect: "Allow"
@@ -91,11 +92,16 @@ functions:
   #         cors: true
   user:
     handler: handler.handleUser
+    DependsOn:
+      - UserPool
     events:
       - http:
           path: users/{id}
           method: get
           cors: true
+          authorizer:
+            name: authorizer
+            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_FMwQqHODC"
   userRegist:
     handler: handler.handleUserRegist
     events:
@@ -140,11 +146,81 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
+    UserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: false
+          UnusedAccountValidityDays: 7
+        AliasAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        EmailVerificationMessage: "Your verification code is {####}."
+        EmailVerificationSubject: "Your verification code"
+        MfaConfiguration: "OFF"
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: false
+            RequireUppercase: false
+        UserPoolName:
+          Ref: AWS::StackName
+        Schema:
+          - AttributeDataType: "String"
+            DeveloperOnlyAttribute: false
+            Mutable: true
+            Name: "email"
+            StringAttributeConstraints:
+              MaxLength: "2048"
+              MinLength: "0"
+            Required: true
+          - AttributeDataType: "String"
+            DeveloperOnlyAttribute: false
+            Mutable: true
+            Name: "name"
+            StringAttributeConstraints:
+              MaxLength: "2048"
+              MinLength: "0"
+            Required: false
+          - AttributeDataType: "String"
+            DeveloperOnlyAttribute: false
+            Mutable: true
+            Name: "custom-attributes"
+            StringAttributeConstraints:
+              MaxLength: "2048"
+              MinLength: "0"
+            Required: false
+        SmsAuthenticationMessage: "Your authentication code is {####}."
+        SmsVerificationMessage: "Your verification code is {####}."
+        UserPoolTags:
+          Name: "AQUAPI"
+    UserPoolClient:
+      Type: "AWS::Cognito::UserPoolClient"
+      Properties:
+        ClientName:
+          Ref: AWS::StackName
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - "ADMIN_NO_SRP_AUTH"
+        ReadAttributes:
+          - "email"
+          - "name"
+          - "custom:custom-attributes"
+        RefreshTokenValidity: 30
+        UserPoolId:
+          Ref: UserPool
+        WriteAttributes:
+          - "email"
+          - "name"
+          - "custom:custom-attributes"
     users:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
-        TableName: "aquapi-${self:provider.stage}-users"
+        TableName: "aquapi-users"
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -158,7 +234,7 @@ resources:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
-        TableName: "aquapi-${self:provider.stage}-tanks"
+        TableName: "aquapi-tanks"
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -172,7 +248,7 @@ resources:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
-        TableName: "aquapi-${self:provider.stage}-fishes"
+        TableName: "aquapi-fishes"
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -186,3 +262,12 @@ resources:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+Outputs:
+  UserPoolClientId:
+    Description: "The name of the user pool client"
+    Value:
+      Ref: UserPoolClient
+  UserPoolId:
+    Description: "The name of the user pool"
+    Value:
+      Ref: UserPool
