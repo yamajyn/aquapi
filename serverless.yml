@@ -83,13 +83,18 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  # userList:
-  #   handler: handler.handleUserList
-  #   events:
-  #     - http:
-  #         path: users
-  #         method: get
-  #         cors: true
+  userList:
+    handler: handler.handleUserList
+    events:
+      - http:
+          path: users
+          method: get
+          request:
+            parameters:
+              querystrings:
+                limit: true
+                startId: true
+          cors: true
   user:
     handler: handler.handleUser
     DependsOn:

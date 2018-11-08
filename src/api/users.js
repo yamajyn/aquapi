@@ -7,36 +7,53 @@ AWS.config.update({ region: "ap-northeast-1" });
 moment.tz.setDefault("Asia/Tokyo");
 
 const db = new AWS.DynamoDB.DocumentClient();
+const tableName = 'aquapi-users'
 
-// export const userList = (event, context, callback) => {
-//   const params = {
-//     TableName: `${event.requestContext.stage}-users`
-//   };
+/**
+ * ユーザ一覧取得API
+ * @param {*} event 
+ * @param {*} context 
+ * @param {*} callback 
+ */
+export const userList = (event, context, callback) => {
+  const defaultLimit = 20
+  const params = {
+    TableName: tableName,
+    ProjectionExpression: "id, userName, createdAt",
+    Limit: defaultLimit,
+  }
+  if(event.queryStringParameters){
+    if(event.queryStringParameters.limit) params.Limit = event.queryStringParameters.limit
+    if(event.queryStringParameters.startId) params.ExclusiveStartKey = { id: event.queryStringParameters.startId}
+  }
 
-//   try {
-//     db.getItem(params, (error, data) => {
-//       if (error) {
-//         callback(null, {
-//           statusCode: 400,
-//           body: JSON.stringify({ message: "Failed.", error: error })
-//         });
-//       }
-//       callback(null, {
-//         statusCode: 200,
-//         body: JSON.stringify({ message: `Hello, ${data.Item.name.S}.` })
-//       });
-//     });
-//   } catch (error) {
-//     callback(null, {
-//       statusCode: 400,
-//       body: JSON.stringify({ message: "Failed.", error: error })
-//     });
-//   }
-// };
+  db.scan(params)
+    .promise()
+    .then(data => {
+      console.log("Get UserList Response ", data);
+      callback(null, {
+        statusCode: 200,
+        body: JSON.stringify(data)
+      });
+    })
+    .catch(err => {
+      console.log("Get UserList Error ", err);
+      callback(null, {
+        statusCode: 400,
+        body: JSON.stringify({ message: "Failed.", error: err })
+      });
+    });
+};
 
+/**
+ * ユーザ取得API
+ * @param {*} event 
+ * @param {*} context 
+ * @param {*} callback 
+ */
 export const user = (event, context, callback) => {
   const params = {
-    TableName: `aquapi-users`,
+    TableName: tableName,
     Key: {
       id: event.pathParameters.id
     }
@@ -55,7 +72,7 @@ export const user = (event, context, callback) => {
       });
     })
     .catch(err => {
-      console.log("Get User Response ", err);
+      console.log("Get User Error ", err);
       callback(null, {
         statusCode: 400,
         body: JSON.stringify({ message: "Failed.", error: err })
@@ -63,12 +80,18 @@ export const user = (event, context, callback) => {
     });
 };
 
+/**
+ * ユーザ登録API
+ * @param {*} event 
+ * @param {*} context 
+ * @param {*} callback 
+ */
 export const userRegist = (event, context, callback) => {
   const params = {
-    TableName: `aquapi-users`,
+    TableName: tableName,
     Item: {
       id: uuidv4(),
-      name: event.userName,
+      userName: event.userName,
       email: event.request.userAttributes.email,
       createdAt: moment().format()
     },
@@ -76,13 +99,14 @@ export const userRegist = (event, context, callback) => {
       id: { Exists: false }
     }
   };
-  console.log("User Regiest ", params.Item);
   db.put(params)
     .promise()
     .then(_ => {
+      console.log("User Regiest ", params.Item);
       callback(null, event);
     })
     .catch(err => {
+      console.log("User Regiest Error", err);
       callback(null, {
         statusCode: 400,
         body: JSON.stringify({ message: "Failed.", error: err })
