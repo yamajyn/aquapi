@@ -1,4 +1,12 @@
 import { user, userList, userRegist } from "./src/api/users";
+import { auth } from "./src/api/auth"
+
+/**
+ * 認証API
+ */
+export const handleAuth = (event, context, callback) => {
+  auth(event, context, callback);
+};
 
 /**
  * ユーザ一覧取得API

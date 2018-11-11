@@ -7,24 +7,26 @@ AWS.config.update({ region: "ap-northeast-1" });
 moment.tz.setDefault("Asia/Tokyo");
 
 const db = new AWS.DynamoDB.DocumentClient();
-const tableName = 'aquapi-users'
+const tableName = "aquapi-users";
 
 /**
  * ユーザ一覧取得API
- * @param {*} event 
- * @param {*} context 
- * @param {*} callback 
+ * @param {*} event
+ * @param {*} context
+ * @param {*} callback
  */
 export const userList = (event, context, callback) => {
-  const defaultLimit = 20
+  const defaultLimit = 20;
   const params = {
     TableName: tableName,
     ProjectionExpression: "id, userName, createdAt",
-    Limit: defaultLimit,
-  }
-  if(event.queryStringParameters){
-    if(event.queryStringParameters.limit) params.Limit = event.queryStringParameters.limit
-    if(event.queryStringParameters.startId) params.ExclusiveStartKey = { id: event.queryStringParameters.startId}
+    Limit: defaultLimit
+  };
+  if (event.queryStringParameters) {
+    if (event.queryStringParameters.limit)
+      params.Limit = event.queryStringParameters.limit;
+    if (event.queryStringParameters.startId)
+      params.ExclusiveStartKey = { id: event.queryStringParameters.startId };
   }
 
   db.scan(params)
@@ -33,7 +35,7 @@ export const userList = (event, context, callback) => {
       console.log("Get UserList Response ", data);
       callback(null, {
         statusCode: 200,
-        body: JSON.stringify(data)
+        body: JSON.stringify(data.Items)
       });
     })
     .catch(err => {
@@ -47,9 +49,9 @@ export const userList = (event, context, callback) => {
 
 /**
  * ユーザ取得API
- * @param {*} event 
- * @param {*} context 
- * @param {*} callback 
+ * @param {*} event
+ * @param {*} context
+ * @param {*} callback
  */
 export const user = (event, context, callback) => {
   const params = {
@@ -82,11 +84,12 @@ export const user = (event, context, callback) => {
 
 /**
  * ユーザ登録API
- * @param {*} event 
- * @param {*} context 
- * @param {*} callback 
+ * @param {*} event
+ * @param {*} context
+ * @param {*} callback
  */
 export const userRegist = (event, context, callback) => {
+  console.log(event);
   const params = {
     TableName: tableName,
     Item: {

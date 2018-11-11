@@ -83,6 +83,12 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
+  auth:
+    handler: handler.handleAuth
+    events:
+      - cognitoUserPool:
+          pool: AQUAPI
+          trigger: PostAuthentication
   userList:
     handler: handler.handleUserList
     events:
@@ -98,7 +104,7 @@ functions:
   user:
     handler: handler.handleUser
     DependsOn:
-      - UserPool
+      - AQUAPI
     events:
       - http:
           path: users/{id}
@@ -106,15 +112,13 @@ functions:
           cors: true
           authorizer:
             name: authorizer
-            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_FMwQqHODC"
+            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_gsiOZ5rJX"
   userRegist:
     handler: handler.handleUserRegist
     events:
-      - http:
-          path: users
-          method: post
-          cors: true
-
+      - cognitoUserPool:
+          pool: AQUAPI
+          trigger: PostConfirmation
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -151,7 +155,7 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
-    UserPool:
+    CognitoUserPoolAQUAPI:
       Type: "AWS::Cognito::UserPool"
       Properties:
         AdminCreateUserConfig:
@@ -161,8 +165,8 @@ resources:
           - email
         AutoVerifiedAttributes:
           - email
-        EmailVerificationMessage: "Your verification code is {####}."
-        EmailVerificationSubject: "Your verification code"
+        EmailVerificationMessage: "認証コードは {####} です"
+        EmailVerificationSubject: "認証コード"
         MfaConfiguration: "OFF"
         Policies:
           PasswordPolicy:
@@ -171,8 +175,7 @@ resources:
             RequireNumbers: true
             RequireSymbols: false
             RequireUppercase: false
-        UserPoolName:
-          Ref: AWS::StackName
+        UserPoolName: "AQUAPI"
         Schema:
           - AttributeDataType: "String"
             DeveloperOnlyAttribute: false
@@ -193,34 +196,33 @@ resources:
           - AttributeDataType: "String"
             DeveloperOnlyAttribute: false
             Mutable: true
-            Name: "custom-attributes"
+            Name: "id"
             StringAttributeConstraints:
               MaxLength: "2048"
               MinLength: "0"
             Required: false
-        SmsAuthenticationMessage: "Your authentication code is {####}."
-        SmsVerificationMessage: "Your verification code is {####}."
+        SmsAuthenticationMessage: "認証コードは {####}です"
+        SmsVerificationMessage: "認証コードは {####}です"
         UserPoolTags:
           Name: "AQUAPI"
     UserPoolClient:
       Type: "AWS::Cognito::UserPoolClient"
       Properties:
-        ClientName:
-          Ref: AWS::StackName
+        ClientName: AQUAPI
         GenerateSecret: false
         ExplicitAuthFlows:
           - "ADMIN_NO_SRP_AUTH"
         ReadAttributes:
           - "email"
           - "name"
-          - "custom:custom-attributes"
+          - "custom:id"
         RefreshTokenValidity: 30
         UserPoolId:
-          Ref: UserPool
+          Ref: CognitoUserPoolAQUAPI
         WriteAttributes:
           - "email"
           - "name"
-          - "custom:custom-attributes"
+          - "custom:id"
     users:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
@@ -275,4 +277,4 @@ Outputs:
   UserPoolId:
     Description: "The name of the user pool"
     Value:
-      Ref: UserPool
+      Ref: CognitoUserPoolAQUAPI
