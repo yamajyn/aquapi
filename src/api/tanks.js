@@ -19,19 +19,26 @@ const tableName = "aquapi-tanks";
  */
 export const tankList = (event, context, callback) => {
   const defaultLimit = 20;
+  const name = getCognitoUserName(event);
   const params = {
     TableName: tableName,
     ProjectionExpression: "id, tankName, createdAt",
+    KeyConditionExpression: "#key1= :userName ",
+    ExpressionAttributeNames: {
+      "#key1": "userName"
+    },
+    ExpressionAttributeValues: {
+      ":userName": name
+    },
+    ScanIndexForward: false, // 降順
     Limit: defaultLimit
   };
   if (event.queryStringParameters) {
     if (event.queryStringParameters.limit)
       params.Limit = event.queryStringParameters.limit;
-    if (event.queryStringParameters.startId)
-      params.ExclusiveStartKey = { id: event.queryStringParameters.startId };
   }
 
-  db.scan(params)
+  db.query(params)
     .promise()
     .then(data => {
       console.log("Get UserList Response ", data);

@@ -117,12 +117,10 @@ functions:
       - http:
           path: tanks
           method: get
-          request:
-            parameters:
-              querystrings:
-                limit: true
-                startId: true
           cors: true
+          authorizer:
+            name: authorizer
+            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_mo5hcLxYA"
   tank:
     handler: handler.handleTank
     events:
@@ -257,11 +255,15 @@ resources:
       Properties:
         TableName: "aquapi-tanks"
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: userName
+            AttributeType: S
+          - AttributeName: createdAt
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: userName
             KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
