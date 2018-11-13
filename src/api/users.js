@@ -1,5 +1,4 @@
 import AWS from "aws-sdk";
-import uuidv4 from "uuid/v4";
 import moment from "moment-timezone";
 
 AWS.config.update({ region: "ap-northeast-1" });
@@ -19,7 +18,7 @@ export const userList = (event, context, callback) => {
   const defaultLimit = 20;
   const params = {
     TableName: tableName,
-    ProjectionExpression: "id, userName, createdAt",
+    ProjectionExpression: "userName, createdAt",
     Limit: defaultLimit
   };
   if (event.queryStringParameters) {
@@ -57,7 +56,7 @@ export const user = (event, context, callback) => {
   const params = {
     TableName: tableName,
     Key: {
-      id: event.pathParameters.id
+      userName: event.pathParameters.name
     }
   };
 
@@ -93,7 +92,6 @@ export const userRegist = (event, context, callback) => {
   const params = {
     TableName: tableName,
     Item: {
-      id: uuidv4(),
       userName: event.userName,
       email: event.request.userAttributes.email,
       createdAt: moment().format()
