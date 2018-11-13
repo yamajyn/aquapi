@@ -1,5 +1,6 @@
 import { user, userList, userRegist } from "./src/api/users";
 import { tank, tankList, tankRegist } from "./src/api/tanks";
+import { tankConditionList, tankConditionRegist } from "./src/api/conditions";
 
 /**
  * ユーザ一覧取得API
@@ -41,4 +42,18 @@ export const handleTank = (event, context, callback) => {
  */
 export const handleTankRegist = (event, context, callback) => {
   tankRegist(event, context, callback);
+};
+
+/**
+ * 水槽状態一覧取得API
+ */
+export const handleTankConditionList = (event, context, callback) => {
+  tankConditionList(event, context, callback);
+};
+
+/**
+ * 水槽登録API
+ */
+export const handleTankConditionRegist = (event, context, callback) => {
+  tankConditionRegist(event, context, callback);
 };

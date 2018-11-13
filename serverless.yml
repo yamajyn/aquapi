@@ -141,6 +141,26 @@ functions:
           authorizer:
             name: authorizer
             arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_mo5hcLxYA"
+  tankCondition:
+    handler: handler.handleTankConditionList
+    events:
+      - http:
+          path: tanks/condition/{id}
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_mo5hcLxYA"
+  tankConditionRegist:
+    handler: handler.handleTankConditionRegist
+    events:
+      - http:
+          path: tanks/condition/{id}
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_mo5hcLxYA"
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -267,20 +287,38 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    fishes:
+    conditions:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
-        TableName: "aquapi-fishes"
+        TableName: "aquapi-conditions"
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: tankId
+            AttributeType: S
+          - AttributeName: createdAt
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: tankId
             KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    # fishes:
+    #   Type: "AWS::DynamoDB::Table"
+    #   DeletionPolicy: Retain
+    #   Properties:
+    #     TableName: "aquapi-fishes"
+    #     AttributeDefinitions:
+    #       - AttributeName: id
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: id
+    #         KeyType: HASH
+    #     ProvisionedThroughput:
+    #       ReadCapacityUnits: 1
+    #       WriteCapacityUnits: 1
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"

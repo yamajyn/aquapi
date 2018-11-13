@@ -8,7 +8,6 @@ AWS.config.update({ region: "ap-northeast-1" });
 moment.tz.setDefault("Asia/Tokyo");
 
 const db = new AWS.DynamoDB.DocumentClient();
-const cognito = new AWS.CognitoIdentityServiceProvider();
 const tableName = "aquapi-tanks";
 
 /**
@@ -41,14 +40,14 @@ export const tankList = (event, context, callback) => {
   db.query(params)
     .promise()
     .then(data => {
-      console.log("Get UserList Response ", data);
+      console.log("Get TankList Response ", data);
       callback(null, {
         statusCode: 200,
         body: JSON.stringify(data.Items)
       });
     })
     .catch(err => {
-      console.log("Get UserList Error ", err);
+      console.log("Get TankList Error ", err);
       callback(null, {
         statusCode: 400,
         body: JSON.stringify({ message: "Failed.", error: err })
