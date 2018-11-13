@@ -21,3 +21,24 @@ export const handleUser = (event, context, callback) => {
 export const handleUserRegist = (event, context, callback) => {
   userRegist(event, context, callback);
 };
+
+/**
+ * 水槽一覧取得API
+ */
+export const handleTankList = (event, context, callback) => {
+  tankList(event, context, callback);
+};
+
+/**
+ * 水槽取得API
+ */
+export const handleTank = (event, context, callback) => {
+  tank(event, context, callback);
+};
+
+/**
+ * 水槽登録API
+ */
+export const handleTankRegist = (event, context, callback) => {
+  tankRegist(event, context, callback);
+};

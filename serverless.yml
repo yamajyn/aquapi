@@ -111,6 +111,38 @@ functions:
       - cognitoUserPool:
           pool: AQUAPI
           trigger: PostConfirmation
+  tankList:
+    handler: handler.handleTankList
+    events:
+      - http:
+          path: tanks
+          method: get
+          request:
+            parameters:
+              querystrings:
+                limit: true
+                startId: true
+          cors: true
+  tank:
+    handler: handler.handleTank
+    events:
+      - http:
+          path: tanks/{id}
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_mo5hcLxYA"
+  tankRegist:
+    handler: handler.handleTankRegist
+    events:
+      - http:
+          path: tanks
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_mo5hcLxYA"
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
