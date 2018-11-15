@@ -21,7 +21,7 @@ export const tankList = (event, context, callback) => {
   const name = getCognitoUserName(event);
   const params = {
     TableName: tableName,
-    ProjectionExpression: "id, tankName, createdAt",
+    ProjectionExpression: "id, tankName, imageUrl, createdAt",
     KeyConditionExpression: "#key1= :userName ",
     ExpressionAttributeNames: {
       "#key1": "userName"
@@ -43,6 +43,9 @@ export const tankList = (event, context, callback) => {
       console.log("Get TankList Response ", data);
       callback(null, {
         statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
         body: JSON.stringify(data.Items)
       });
     })
