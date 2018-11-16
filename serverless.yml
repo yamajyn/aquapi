@@ -141,7 +141,7 @@ functions:
           authorizer:
             name: authorizer
             arn: "arn:aws:cognito-idp:ap-northeast-1:861968124599:userpool/ap-northeast-1_mo5hcLxYA"
-  tankCondition:
+  tankConditionList:
     handler: handler.handleTankConditionList
     events:
       - http:

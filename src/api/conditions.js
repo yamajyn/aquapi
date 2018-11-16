@@ -29,7 +29,7 @@ export const tankConditionList = (event, context, callback) => {
     ExpressionAttributeValues: {
       ":tankId": tankId
     },
-    ScanIndexForward: false, // 降順
+    // ScanIndexForward: false, // 降順
     Limit: defaultLimit
   };
   if (event.queryStringParameters) {
@@ -43,6 +43,9 @@ export const tankConditionList = (event, context, callback) => {
       console.log("Get TankCondition Response ", data);
       callback(null, {
         statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
         body: JSON.stringify(data.Items)
       });
     })
