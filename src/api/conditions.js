@@ -29,7 +29,7 @@ export const tankConditionList = (event, context, callback) => {
     ExpressionAttributeValues: {
       ":tankId": tankId
     },
-    // ScanIndexForward: false, // 降順
+    ScanIndexForward: false, // 降順
     Limit: defaultLimit
   };
   if (event.queryStringParameters) {
