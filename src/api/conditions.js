@@ -46,7 +46,7 @@ export const tankConditionList = (event, context, callback) => {
         headers: {
           "Access-Control-Allow-Origin": "*"
         },
-        body: JSON.stringify(data.Items)
+        body: JSON.stringify(data.Items.reverse())
       });
     })
     .catch(err => {
